@@ -30,13 +30,9 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
         if (!request.getMethod().equals(HttpMethod.POST.name())) { // POST가 아닌 메소드는 걸러내기
-            try {
-                status(400, "Http Method Error", response);
-                return null;
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+            throw new IllegalArgumentException("잘못된 Method 요청입니다.");
         }
+
         try {
             // LoginRequestDto 사용
             LoginRequestDto requestDto = new ObjectMapper().readValue(request.getInputStream(), LoginRequestDto.class);
@@ -49,16 +45,9 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                     )
             );
         } catch (IOException e) {
-            try {
-                status(400, "회원을 찾을 수 없습니다.", response);
-                log.error("회원을 찾을 수 없습니다.");
-                return null;
-            } catch (IOException ex) {
-                throw new RuntimeException(ex);
-            }
-//            throw new RuntimeException(e.getMessage());
-//            throw new MyBlogException(MyBlogErrorCode.NOT_FOUND_USER, null);
+            throw new IllegalArgumentException("회원을 찾을 수 없습니다.");
         }
+
     } // attemptAuthentication()
 
     @Override
@@ -70,29 +59,13 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         String token = jwtUtil.createToken(username, role);
         response.addHeader(JwtUtil.AUTHORIZATION_HEADER, token);
 
-        status(200, "로그인 성공", response);
-    }
+//        status(200, "로그인 성공", response);
+    } // successfulAuthentication
 
     @Override
     public void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException {
-        response.setStatus(400);
-        status(400, "회원을 찾을 수 없습니다.", response);
         log.error("400, 회원을 찾을 수 없습니다.");
-//        throw new MyBlogException(MyBlogErrorCode.NOT_FOUND_USER, null);
-    }
+        throw new IllegalArgumentException("회원을 찾을 수 없습니다.");
+    } // unsuccessfulAuthentication
 
-    // 상태 코드 반환하기
-    public void status(int statusCode, String message, HttpServletResponse response) throws IOException {
-        // 응답 데이터를 JSON 형식으로 생성
-        String jsonResponse = "{\"status\": " + statusCode + ", \"message\": \"" + message + "\"}";
-
-        // Content-Type 및 문자 인코딩 설정
-        response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8");
-
-        // PrintWriter를 사용하여 응답 데이터 전송
-        PrintWriter writer = response.getWriter();
-        writer.write(jsonResponse);
-        writer.flush();
-    }
 }

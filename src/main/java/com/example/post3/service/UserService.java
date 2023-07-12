@@ -43,21 +43,14 @@ public class UserService {
         // 회원 중복 확인
         Optional<User> checkUsername = userRepository.findByUsername(username);
         if (checkUsername.isPresent()) {
-            try {
-                status(400, "중복된 username 입니다.", res);
-                log.error("중복된 username 입니다.");
-                return null;
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-//            throw new MyBlogException(MyBlogErrorCode.IN_USED_USERNAME, null);
+            throw new IllegalArgumentException("중복된 username 입니다.");            
         }
 
         // 사용자 ROLE 확인
         UserRoleEnum role = UserRoleEnum.USER;
         if (!requestDto.getAdminToken().isBlank()) {
             if (!ADMIN_TOKEN.equals(requestDto.getAdminToken())) {
-                throw new IllegalArgumentException("권한 잘못됨");
+                throw new IllegalArgumentException("ADMIN 토큰이 일치하지 않습니다.");
             }
             // 수동으로 admin의 값을 true로 설정해줌
             requestDto.setAdmin(true);
@@ -68,25 +61,9 @@ public class UserService {
         User user = new User(username, password, role);
         userRepository.save(user);
 
-        StatusResponseDto statusResponseDto = new StatusResponseDto();
-        statusResponseDto.setMessage("회원가입 성공");
-        statusResponseDto.setStatusCode(200);
-
+        // 성공했을 경우의 상태코드와 메시지 반환
+        StatusResponseDto statusResponseDto = new StatusResponseDto("회원가입 성공", 200);
         return statusResponseDto;
     }
 
-    // 상태 코드 반환하기
-    public void status(int statusCode, String message, HttpServletResponse response) throws IOException {
-        // 응답 데이터를 JSON 형식으로 생성
-        String jsonResponse = "{\"status\": " + statusCode + ", \"message\": \"" + message + "\"}";
-
-        // Content-Type 및 문자 인코딩 설정
-        response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8");
-
-        // PrintWriter를 사용하여 응답 데이터 전송
-        PrintWriter writer = response.getWriter();
-        writer.write(jsonResponse);
-        writer.flush();
-    }
 }
