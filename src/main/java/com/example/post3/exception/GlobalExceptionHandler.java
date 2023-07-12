@@ -18,4 +18,14 @@ public class GlobalExceptionHandler {
                 HttpStatus.BAD_REQUEST
         );
     }
+
+    @ExceptionHandler({NullPointerException.class})
+    public ResponseEntity<StatusResponseDto> nullPointerExceptionHandler(NullPointerException e) {
+        StatusResponseDto statusResponseDto = new StatusResponseDto(e.getMessage(), HttpStatus.NOT_FOUND.value());
+
+        return new ResponseEntity<>(
+                statusResponseDto,
+                HttpStatus.NOT_FOUND
+        );
+    }
 }
