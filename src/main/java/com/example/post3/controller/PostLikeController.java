@@ -17,16 +17,16 @@ public class PostLikeController {
     private final PostLikeService postLikeService;
 
     // @RequestBody
-    @PostMapping("/api/post/{postId}/like") // ResponseEntity<ApiResponseDto>
-    public ResponseEntity<String> addpostlike(@PathVariable(name = "postId") Long postId, @AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody LikeRequestDto likeRequestDto) {
+    @PostMapping("/api/post/{postId}/addlike") // ResponseEntity<ApiResponseDto>
+    public ResponseEntity<String> addpostlike(@PathVariable(name = "postId") Long postId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         log.info("좋아요 시도");
-        return postLikeService.addpostlike(postId, userDetails, likeRequestDto);
+        return postLikeService.addpostlike(postId, userDetails);
     }
 
-    @DeleteMapping("/api/post/{postId}/like") // ResponseEntity<ApiResponseDto>
-    public ResponseEntity<String> deletepostlike(@PathVariable(name = "postId") Long postId, @AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody LikeRequestDto likeRequestDto) {
+    @PostMapping("/api/post/{postId}/cancellike") // ResponseEntity<ApiResponseDto>
+    public ResponseEntity<String> cancelpostlike(@PathVariable(name = "postId") Long postId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         log.info("좋아요 취소 시도");
-        return postLikeService.deletepostlike(postId, userDetails, likeRequestDto);
+        return postLikeService.cancelpostlike(postId, userDetails);
     }
 
 }

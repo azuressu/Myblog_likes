@@ -21,7 +21,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler({DuplicateRequestException.class})
-    public ResponseEntity<StatusResponseDto> duplicateRequestException(IllegalArgumentException e) {
+    public ResponseEntity<StatusResponseDto> duplicateRequestException(DuplicateRequestException e) {
         StatusResponseDto statusResponseDto = new StatusResponseDto(e.getMessage(), HttpStatus.BAD_REQUEST.value());
         return new ResponseEntity<>(
                 // Http Body
