@@ -26,10 +26,17 @@ public class CommentLike {
     @JoinColumn(name = "comment_id")
     private Comment comment;
 
+    @Column(name = "commentlike")
+    private Boolean like;
+
     public CommentLike(User user, Post post, Comment commnet) {
         this.user = user;
         this.post = post;
         this.comment = commnet;
+    }
+
+    public void setLike(Boolean like) {
+        this.like = like;
     }
 
 }
