@@ -26,7 +26,6 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
     private final UserDetailsServiceImpl userDetailsService;
-    private final MessageSource messageSource;
 
     @Override
     protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain filterChain) throws ServletException, IOException {
@@ -36,8 +35,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
             if (!jwtUtil.validateToken(tokenValue)) {
                 log.error("Token Error: HttpServletRequest Header의 토큰이 유효하지 않습니다.");
-                throw new IllegalArgumentException();
-//                return;
+                throw new IllegalArgumentException("토큰이 유효하지 않습니다.");
             }
 
             Claims info = jwtUtil.getUserInfoFromToken(tokenValue);
@@ -69,20 +67,5 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         // return 타입이 Authentication 임
         return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
     } // createAuthentication()
-
-    // 상태 코드 반환하기
-    public void status(int statusCode, String message, HttpServletResponse response) throws IOException {
-        // 응답 데이터를 JSON 형식으로 생성
-        String jsonResponse = "{\"statusCode\": " + statusCode + ", \"message\": \"" + message + "\"}";
-
-        // Content-Type 및 문자 인코딩 설정
-        response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8");
-
-        // PrintWriter를 사용하여 응답 데이터 전송
-        PrintWriter writer = response.getWriter();
-        writer.write(jsonResponse);
-        writer.flush();
-    }
 
 }
