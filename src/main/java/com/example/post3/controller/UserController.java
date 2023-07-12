@@ -21,8 +21,8 @@ public class UserController {
     }
 
     @PostMapping("/user/signup")
-    public StatusResponseDto signup(HttpServletResponse res, @Valid @RequestBody SignupRequestDto signupRequestDto) {
-        return userService.signup(res, signupRequestDto);
+    public StatusResponseDto signup(@Valid @RequestBody SignupRequestDto signupRequestDto) {
+        return userService.signup(signupRequestDto);
     }
     /* sign up 할 때, HttpservletResponse res, (res.setStatus), SignupRequestDto 를 매개변수로
      * 받아와서, 중복 확인하고 (Service로 넘겨라)

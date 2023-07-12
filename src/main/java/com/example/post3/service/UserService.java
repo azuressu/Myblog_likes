@@ -34,7 +34,7 @@ public class UserService {
     // ADMIN_TOKEN
     private final String ADMIN_TOKEN = "AAABnvxRVklrnYxKZ0aHgTBcXukeZygoC";
 
-    public StatusResponseDto signup(HttpServletResponse res, SignupRequestDto requestDto) {
+    public StatusResponseDto signup(SignupRequestDto requestDto) {
         String username = requestDto.getUsername();
         log.info(username);
 

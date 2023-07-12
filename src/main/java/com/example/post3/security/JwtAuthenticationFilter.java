@@ -2,6 +2,7 @@ package com.example.post3.security;
 
 import com.example.post3.dto.LoginRequestDto;
 import com.example.post3.entity.UserRoleEnum;
+import com.example.post3.exception.StatusResponseDto;
 import com.example.post3.jwt.JwtUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
@@ -9,13 +10,15 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 @Slf4j(topic = "로그인 및 JWT 생성")
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
@@ -59,13 +62,21 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         String token = jwtUtil.createToken(username, role);
         response.addHeader(JwtUtil.AUTHORIZATION_HEADER, token);
 
-//        status(200, "로그인 성공", response);
+        // 성공했을 때는 어떻게 반환해주지 ..? 흠
+        StatusResponseDto statusResponseDto = new StatusResponseDto("로그인 성공", 200);
+        new ObjectMapper().writeValue(response.getOutputStream(), statusResponseDto);
     } // successfulAuthentication
 
     @Override
     public void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException {
         log.error("400, 회원을 찾을 수 없습니다.");
-        throw new IllegalArgumentException("회원을 찾을 수 없습니다.");
+
+        StatusResponseDto statusResponseDto = new StatusResponseDto("회원을 찾을 수 없습니다.", 400);
+        response.setStatus(400);
+        new ObjectMapper().writeValue(response.getOutputStream(), statusResponseDto);
+
+        // 예외 처리를 그냥 던져주면 오류 발생
+        // throw new IllegalArgumentException("회원을 찾을 수 없습니다.");
     } // unsuccessfulAuthentication
 
 }
