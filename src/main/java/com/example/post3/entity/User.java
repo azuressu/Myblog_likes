@@ -23,8 +23,8 @@ public class User {
     @Column(name = "password", nullable = false)
     private String password;
 
-    @OneToMany(mappedBy = "user")  // post_id로 했더니 오류남
-    private List<Post> postList = new ArrayList<>();
+//    @OneToMany(mappedBy = "user")  // post_id로 했더니 오류남
+//    private List<Post> postList = new ArrayList<>();
 
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
@@ -36,8 +36,8 @@ public class User {
         this.role = role;
     }
 
-    public void addPostList(Post post) {
-        this.postList.add(post);
-        post.setUser(this);
-    }
+//    public void addPostList(Post post) {
+//        this.postList.add(post);
+//        post.setUser(this);
+//    }
 }

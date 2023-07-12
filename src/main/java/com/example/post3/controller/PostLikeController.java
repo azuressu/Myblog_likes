@@ -20,13 +20,13 @@ public class PostLikeController {
     @PostMapping("/api/post/{postId}/addlike") // ResponseEntity<ApiResponseDto>
     public ResponseEntity<String> addpostlike(@PathVariable(name = "postId") Long postId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         log.info("좋아요 시도");
-        return postLikeService.addpostlike(postId, userDetails);
+        return postLikeService.addpostlike(postId, userDetails.getUser());
     }
 
     @PostMapping("/api/post/{postId}/cancellike") // ResponseEntity<ApiResponseDto>
     public ResponseEntity<String> cancelpostlike(@PathVariable(name = "postId") Long postId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         log.info("좋아요 취소 시도");
-        return postLikeService.cancelpostlike(postId, userDetails);
+        return postLikeService.cancelpostlike(postId, userDetails.getUser());
     }
 
 }
