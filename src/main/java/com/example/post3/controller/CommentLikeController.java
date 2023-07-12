@@ -34,7 +34,7 @@ public class CommentLikeController {
                                                  @RequestBody LikeRequestDto likeRequestDto
 
     ) {
-        log.info("좋아요 시도");
+        log.info("좋아요 취소 시도");
         return commentLikeService.deletecommentlike(postId, commentId, userDetails, likeRequestDto);
     }
 

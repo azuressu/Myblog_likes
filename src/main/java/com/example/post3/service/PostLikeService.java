@@ -20,7 +20,6 @@ import org.springframework.stereotype.Service;
 public class PostLikeService {
 
     private final PostLikeRepository postLikeRepository;
-    private final UserRepository userRepository;
     private final PostRepository postRepository;
 
     public ResponseEntity<String> addpostlike(Long postId, UserDetailsImpl userDetails, LikeRequestDto likeRequestDto) {
