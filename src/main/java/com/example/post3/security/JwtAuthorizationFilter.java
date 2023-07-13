@@ -46,6 +46,8 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                 log.error(e.getMessage());
                 return;
             }
+        } else {
+            throw new IllegalArgumentException("토큰이 유효하지 않습니다.");
         }
 
         filterChain.doFilter(req, res);
