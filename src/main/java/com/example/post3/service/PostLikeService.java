@@ -1,13 +1,10 @@
 package com.example.post3.service;
 
-import com.example.post3.dto.LikeRequestDto;
 import com.example.post3.entity.Post;
 import com.example.post3.entity.PostLike;
 import com.example.post3.entity.User;
 import com.example.post3.repository.PostLikeRepository;
 import com.example.post3.repository.PostRepository;
-import com.example.post3.repository.UserRepository;
-import com.example.post3.security.UserDetailsImpl;
 import com.sun.jdi.request.DuplicateRequestException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

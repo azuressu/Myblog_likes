@@ -1,6 +1,5 @@
 package com.example.post3.controller;
 
-import com.example.post3.dto.LikeRequestDto;
 import com.example.post3.security.UserDetailsImpl;
 import com.example.post3.service.PostLikeService;
 import lombok.RequiredArgsConstructor;
@@ -16,14 +15,13 @@ public class PostLikeController {
 
     private final PostLikeService postLikeService;
 
-    // @RequestBody
-    @PostMapping("/api/post/{postId}/addlike") // ResponseEntity<ApiResponseDto>
+    @PostMapping("/api/post/{postId}/like")
     public ResponseEntity<String> addpostlike(@PathVariable(name = "postId") Long postId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         log.info("좋아요 시도");
         return postLikeService.addpostlike(postId, userDetails.getUser());
     }
 
-    @PostMapping("/api/post/{postId}/cancellike") // ResponseEntity<ApiResponseDto>
+    @PutMapping("/api/post/{postId}/like")
     public ResponseEntity<String> cancelpostlike(@PathVariable(name = "postId") Long postId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         log.info("좋아요 취소 시도");
         return postLikeService.cancelpostlike(postId, userDetails.getUser());

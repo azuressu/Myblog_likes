@@ -33,7 +33,7 @@ public class Post extends Timestamped{
     @JoinColumn(name = "username")
     private User user;
 
-//    @ColumnDefault("0")
+    @ColumnDefault("0")
     @Column(name = "like_count", nullable = false)
     private Integer likeCount;
 
@@ -43,7 +43,6 @@ public class Post extends Timestamped{
     public Post(PostRequestDto requestDto) {
         this.title = requestDto.getTitle();
         this.contents = requestDto.getContents();
-        this.likeCount = 0;
     }
 
     public void update(PostRequestDto requestDto) {

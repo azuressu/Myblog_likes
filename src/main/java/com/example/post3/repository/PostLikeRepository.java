@@ -5,9 +5,11 @@ import com.example.post3.entity.PostLike;
 import com.example.post3.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface PostLikeRepository extends JpaRepository<PostLike, Long> {
     Optional<PostLike> findByUserAndPost(User user, Post post);
 
+    List<PostLike> findByPost(Post post);
 }

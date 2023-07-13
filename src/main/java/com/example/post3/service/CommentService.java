@@ -2,13 +2,16 @@ package com.example.post3.service;
 
 import com.example.post3.dto.CommentRequestDto;
 import com.example.post3.dto.CommentResponseDto;
+import com.example.post3.entity.CommentLike;
 import com.example.post3.exception.StatusResponseDto;
 import com.example.post3.entity.Comment;
 import com.example.post3.entity.Post;
 import com.example.post3.entity.User;
+import com.example.post3.repository.CommentLikeRepository;
 import com.example.post3.repository.CommentRepository;
 import com.example.post3.repository.PostRepository;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,9 +19,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class CommentService {
 
 
@@ -27,11 +32,7 @@ public class CommentService {
 
     @Autowired
     private final CommentRepository commentRepository;
-
-    public CommentService(PostRepository postRepository, CommentRepository commentRepository) {
-        this.postRepository = postRepository;
-        this.commentRepository = commentRepository;
-    }
+    private final CommentLikeRepository commentLikeRepository;
 
     // 댓글 작성
     public CommentResponseDto createComment(Long id, CommentRequestDto requestDto, User user) {
@@ -78,13 +79,18 @@ public class CommentService {
         // 해당 댓글을 작성한 작성자 이거나, 권한이 ADMIN인 경우 댓글 삭제 가능
         if (comment.getUser().getUsername().equals(user.getUsername())
                 || user.getRole().getAuthority().equals("ROLE_ADMIN")) {
+
+            // 댓글의 좋아요 기록도 함께 삭제
+            deleteCommentLike(comment);
+
             // 있으면 댓글 삭제
             commentRepository.delete(comment);
+
             // 상태 ResponseDto에 담아서 반환
             StatusResponseDto statusResponseDto = new StatusResponseDto("댓글 삭제 성공", 200);
             return statusResponseDto;
         } else {
-            log.info("작성자만 수정할 수 있습니다.");
+            log.info("작성자만 삭제할 수 있습니다.");
             throw new IllegalArgumentException("작성자만 삭제/수정할 수 있습니다.");
         }
     }
@@ -98,6 +104,14 @@ public class CommentService {
     private Comment findComment(Long commentid) {
         return commentRepository.findById(commentid).orElseThrow(() ->
                 new IllegalArgumentException("선택한 댓글은 존재하지 않습니다"));
+    }
+
+    // 좋아요 기록 삭제하는 메서드
+    private void deleteCommentLike (Comment comment) {
+        // 댓글 좋아요 기록 찾아오기
+        List<CommentLike> commentLikeList = commentLikeRepository.findByComment(comment);
+        // 댓글 좋아요 기록 삭제하기
+        commentLikeRepository.deleteAll(commentLikeList);
     }
 
 }

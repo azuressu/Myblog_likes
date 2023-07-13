@@ -3,11 +3,14 @@ package com.example.post3.service;
 import com.example.post3.dto.PostRequestDto;
 import com.example.post3.dto.PostResponseDto;
 import com.example.post3.entity.Post;
+import com.example.post3.entity.PostLike;
 import com.example.post3.entity.User;
 import com.example.post3.exception.StatusResponseDto;
 import com.example.post3.repository.CommentRepository;
+import com.example.post3.repository.PostLikeRepository;
 import com.example.post3.repository.PostRepository;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,6 +21,7 @@ import java.util.List;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class PostService {
 
     @Autowired
@@ -26,11 +30,7 @@ public class PostService {
     @Autowired
     private final CommentRepository commentRepository;
 
-    @Autowired
-    public PostService(PostRepository postRepository, CommentRepository commentRepository) {
-        this.postRepository = postRepository;
-        this.commentRepository = commentRepository;
-    }
+    private final PostLikeRepository postLikeRepository;
 
     public PostResponseDto createPost(PostRequestDto requestDto, User user) {
         Post post = new Post();
@@ -81,6 +81,10 @@ public class PostService {
         // 해당 게시글을 작성한 작성자 이거나, 권한이 ADMIN인 경우는 삭제 가능
         if (user.getUsername().equals(post.getUser().getUsername())
                 || user.getRole().getAuthority().equals("ROLE_ADMIN")) {
+            // 게시글의 좋아요 기록 삭제
+            deletePostLike(post);
+            
+            // 게시글 삭제
             postRepository.delete(post);
 
             StatusResponseDto statusResponseDto = new StatusResponseDto("게시글 삭제 성공", 200);
@@ -95,6 +99,14 @@ public class PostService {
     private Post findPost(Long id) {
         return postRepository.findById(id).orElseThrow(() ->
                 new IllegalArgumentException("선택한 게시글은 존재하지 않습니다."));
+    }
+
+    // 게시글 좋아요 기록 삭제하기
+    private void deletePostLike(Post post) {
+        // 게시글 좋아요 기록 가져오기
+        List<PostLike> postLikeList = postLikeRepository.findByPost(post);
+        // 게시글 좋아요 기록 삭제하기
+        postLikeRepository.deleteAll(postLikeList);
     }
 
 }
