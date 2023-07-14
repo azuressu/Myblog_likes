@@ -104,7 +104,7 @@ public class PostService {
     // 게시글 좋아요 기록 삭제하기
     private void deletePostLike(Post post) {
         // 게시글 좋아요 기록 가져오기
-        List<PostLike> postLikeList = postLikeRepository.findByPost(post);
+        List<PostLike> postLikeList = postLikeRepository.findByPostId(post.getId());
         // 게시글 좋아요 기록 삭제하기
         postLikeRepository.deleteAll(postLikeList);
     }

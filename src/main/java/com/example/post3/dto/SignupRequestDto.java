@@ -20,13 +20,13 @@ public class SignupRequestDto {
       @NotBrank : 반드시 값이 존재하고 공백 문자를 제외한 길이가 0보다 커야 한다.*/
 
     @NotBlank
-    @Size(min = 4, max = 10)
-    @Pattern(regexp = "^[a-z0-9]{4,10}$", message = "알파벳 소문자와 숫자만 입력 가능합니다")
+//    @Size(min = 4, max = 10)
+//    @Pattern(regexp = "^[a-z0-9]{4,10}$", message = "알파벳 소문자와 숫자만 입력 가능합니다")
     private String username;
 
     @NotBlank
-    @Size(min = 8, max = 15, message = "8자에서 15자로 입력해야 합니다")
-    @Pattern(regexp = "^[A-Za-z0-9@$!%*?&]*$", message = "알파벳 대소문자와 숫자, 특수문자만 입력 가능합니다")
+//    @Size(min = 8, max = 15, message = "8자에서 15자로 입력해야 합니다")
+//    @Pattern(regexp = "^[A-Za-z0-9@$!%*?&]*$", message = "알파벳 대소문자와 숫자, 특수문자만 입력 가능합니다")
     private String password;
 
     private boolean admin = false;

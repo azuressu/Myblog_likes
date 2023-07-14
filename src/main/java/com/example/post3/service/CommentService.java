@@ -109,7 +109,7 @@ public class CommentService {
     // 좋아요 기록 삭제하는 메서드
     private void deleteCommentLike (Comment comment) {
         // 댓글 좋아요 기록 찾아오기
-        List<CommentLike> commentLikeList = commentLikeRepository.findByComment(comment);
+        List<CommentLike> commentLikeList = commentLikeRepository.findByCommentId(comment.getId());
         // 댓글 좋아요 기록 삭제하기
         commentLikeRepository.deleteAll(commentLikeList);
     }

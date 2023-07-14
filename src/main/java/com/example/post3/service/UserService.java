@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 @Slf4j
 @Service
@@ -38,10 +39,20 @@ public class UserService {
 
         String password = passwordEncoder.encode(requestDto.getPassword());
 
-        // 회원 중복 확인
-        Optional<User> checkUsername = userRepository.findByUsername(username);
-        if (checkUsername.isPresent()) {
-            throw new IllegalArgumentException("중복된 username 입니다.");            
+        // username 패턴 확인
+        if (Pattern.matches("^[a-z0-9]{4,10}$", username)) {
+            // 회원 중복 확인
+            Optional<User> checkUsername = userRepository.findByUsername(username);
+            if (checkUsername.isPresent()) {
+                throw new IllegalArgumentException("중복된 username 입니다.");
+            }
+        } else {
+            throw new IllegalArgumentException("username 구성에 맞지 않습니다. 영어 소문자 및 숫자를 이용해 4자에서 10자 이내로 입력하세요.");
+        }
+
+        // password 패턴 확인
+        if (!Pattern.matches("^[A-Za-z0-9@$!%*?&!~#]{8,15}$", requestDto.getPassword())){
+            throw new IllegalArgumentException("password 구성에 맞지 않습니다. 영어 대소문자 및 숫자 및 특수문자를 이용해 8자에서 15자 이내로 입력하세요.");
         }
 
         // 사용자 ROLE 확인

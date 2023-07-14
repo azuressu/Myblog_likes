@@ -17,8 +17,6 @@ import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
 
-
-
 @Slf4j(topic = "JwtUtil")
 @Component // Bean으로 등록할 에너테이션
 public class JwtUtil {
@@ -37,6 +35,10 @@ public class JwtUtil {
     private Key key;
     private final SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
 
+    /* 필터가 생성될 때 수행되는 메소드
+    *  웹 컨테이너가 사용 중인 필터를 나타내기 위해 호출
+    *  서블릿 컨테이너 틀 필터를 인스턴스화 한 후에 init 메서드를 정확하게 한 번 호출
+    *  필터가 필터링 작업을 수행하도록 요쳥하기 전에 init 메서드는 성공적으로 완료되어야 함*/
     @PostConstruct
     public void init() {
         byte[] bytes = Base64.getDecoder().decode(secretKey);
