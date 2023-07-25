@@ -2,6 +2,7 @@ package com.example.post3.controller;
 
 import com.example.post3.dto.CommentRequestDto;
 import com.example.post3.dto.CommentResponseDto;
+import com.example.post3.entity.Comment;
 import com.example.post3.exception.StatusResponseDto;
 import com.example.post3.security.UserDetailsImpl;
 import com.example.post3.service.CommentService;
@@ -29,12 +30,14 @@ public class CommentController {
     // 댓글 수정
     @PutMapping("/post/{id}/comment/{commentid}")
     public CommentResponseDto updateComment(@PathVariable Long id, @PathVariable Long commentid, @RequestBody CommentRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return commentService.updateCommnet(id, commentid, requestDto, userDetails.getUser());
+        Comment comment = commentService.findComment(commentid);
+        return commentService.updateCommnet(id, comment, requestDto, userDetails.getUser());
     }
 
     @DeleteMapping("/post/{id}/comment/{commentid}")
     public StatusResponseDto deleteComment(@PathVariable Long id, @PathVariable Long commentid, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        commentService.deleteComment(id, commentid, userDetails.getUser());
+        Comment comment = commentService.findComment(commentid);
+        commentService.deleteComment(id, comment, userDetails.getUser());
         return new StatusResponseDto("댓글 삭제 성공", 200);
     }
 }

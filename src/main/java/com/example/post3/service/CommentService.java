@@ -20,20 +20,20 @@ public interface CommentService {
     /**
      * 댓글 수정
      * @param postid: 수정할 댓글의 게시글 id
-     * @param commentid: 수정할 댓글의 id
+     * @param comment: 수정할 댓글
      * @param requestDto: 수정할 댓글의 내용
      * @param user: 댓글 수정 요청자
      * @return: 수정한 댓글 내용
      */
-    CommentResponseDto updateCommnet(Long postid, Long commentid, CommentRequestDto requestDto, User user);
+    CommentResponseDto updateCommnet(Long postid, Comment comment, CommentRequestDto requestDto, User user);
 
     /**
      * 댓글 삭제
      * @param postid: 삭제할 댓글의 게시글 id
-     * @param commentid: 삭제할 댓글의 id
+     * @param comment: 삭제할 댓글
      * @param user: 댓글 삭제 요청자
      */
-    void deleteComment(Long postid, Long commentid, User user);
+    void deleteComment(Long postid, Comment comment, User user);
 
     /**
      * 게시글 찾기
