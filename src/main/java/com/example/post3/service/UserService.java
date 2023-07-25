@@ -38,6 +38,11 @@ public class UserService {
         String password = passwordEncoder.encode(requestDto.getPassword());
         log.info(username);
 
+        // Username 중복 확인
+        if (userRepository.findByUsername(username).isPresent()) {
+            throw new IllegalArgumentException("중복된 username 입니다.");
+        }
+
         // 사용자 ROLE 확인
         UserRoleEnum role = UserRoleEnum.USER;
         if (!requestDto.getAdminToken().isBlank()) {

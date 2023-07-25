@@ -5,13 +5,13 @@ import com.example.post3.exception.StatusResponseDto;
 import com.example.post3.service.UserService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/user")
 public class UserController {
 
     private final UserService userService;
@@ -20,11 +20,20 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PostMapping("/user/signup")
+    @PostMapping("/signup")
     public StatusResponseDto signup(@Valid @RequestBody SignupRequestDto signupRequestDto) {
         return userService.signup(signupRequestDto);
     }
-    /* sign up 할 때, HttpservletResponse res, (res.setStatus), SignupRequestDto 를 매개변수로
-     * 받아와서, 중복 확인하고 (Service로 넘겨라)
-     * 맞으면, return 상태값 & 메세지 */
+
+    // Validation 예외 처리
+    @ExceptionHandler({MethodArgumentNotValidException.class})
+    public ResponseEntity<StatusResponseDto> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+        StatusResponseDto statusResponseDto = new StatusResponseDto(e.getBindingResult().getAllErrors().get(0).getDefaultMessage(), HttpStatus.BAD_REQUEST.value());
+        return new ResponseEntity<>(
+                // Http Body
+                statusResponseDto,
+                // Http StatusCode
+                HttpStatus.BAD_REQUEST
+        );
+    }
 }
