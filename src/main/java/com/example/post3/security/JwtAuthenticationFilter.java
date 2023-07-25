@@ -63,6 +63,9 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         response.addHeader(JwtUtil.AUTHORIZATION_HEADER, token);
 
         // 성공했을 때는 어떻게 반환해주지 ..? 흠
+        response.setStatus(200);
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
         StatusResponseDto statusResponseDto = new StatusResponseDto("로그인 성공", 200);
         new ObjectMapper().writeValue(response.getOutputStream(), statusResponseDto);
     } // successfulAuthentication
@@ -71,6 +74,9 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     public void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException {
         log.error("400, 회원을 찾을 수 없습니다.");
 
+        response.setStatus(400);
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
         StatusResponseDto statusResponseDto = new StatusResponseDto("회원을 찾을 수 없습니다.", 400);
         response.setStatus(400);
         new ObjectMapper().writeValue(response.getOutputStream(), statusResponseDto);
