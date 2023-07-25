@@ -5,8 +5,9 @@ import com.example.post3.dto.PostResponseDto;
 import com.example.post3.entity.Post;
 import com.example.post3.exception.StatusResponseDto;
 import com.example.post3.security.UserDetailsImpl;
-import com.example.post3.service.PostService;
+import com.example.post3.service.PostServiceImpl;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,14 +15,11 @@ import java.util.List;
 
 @RestController // ResponseBody는 붙이면 안됨 !
 @RequestMapping("/api")
+@RequiredArgsConstructor
 public class PostController {
 
     // 제어의 흐름 : PostController → PostService → PostRepository
-    private final PostService postService;
-
-    public PostController(PostService postService) {
-        this.postService = postService;
-    }
+    private final PostServiceImpl postService;
 
     // 게시글 작성
     @PostMapping("/post")
@@ -51,7 +49,8 @@ public class PostController {
     @DeleteMapping("/post/{id}")
     public StatusResponseDto deletePost(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails){
         Post post = postService.findPost(id);
-        return postService.deletePost(post, userDetails.getUser());
+        postService.deletePost(post, userDetails.getUser());
+        return new StatusResponseDto("게시글 삭제 성공", 200);
     }
 
 }
