@@ -6,6 +6,7 @@ import lombok.Getter;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @Getter
@@ -18,7 +19,7 @@ public class PostResponseDto {
     private Integer likecount;
     private LocalDateTime createTime;
     private LocalDateTime modifyTime;
-    private List<CommentResponseDto> commentList = new ArrayList<>();
+    private List<CommentResponseDto> commentList;
 
     public PostResponseDto(Post post) {
         this.id = post.getId();
@@ -28,13 +29,9 @@ public class PostResponseDto {
         this.contents = post.getContents();
         this.createTime = post.getCreateTime();
         this.modifyTime = post.getModifyTime();
-
-        // post에 저장된 commentList Comment들을 하나씩 저장해준다
-        // 날짜 거꾸로를 출력하고 싶어서, 거꾸로 리스트에 담아준다
-        if (post.getCommentList().size() > 0) {
-            for (Comment comment : post.getCommentList()) {
-                this.commentList.add(new CommentResponseDto(comment));
-            }
-        }
+        // 댓글 내림차순 정렬
+        this.commentList = post.getCommentList().stream()
+                        .sorted(Comparator.comparing(Comment::getCreateTime))
+                        .map(CommentResponseDto::new).toList();
     }
 }

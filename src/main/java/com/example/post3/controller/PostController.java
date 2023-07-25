@@ -2,6 +2,7 @@ package com.example.post3.controller;
 
 import com.example.post3.dto.PostRequestDto;
 import com.example.post3.dto.PostResponseDto;
+import com.example.post3.entity.Post;
 import com.example.post3.exception.StatusResponseDto;
 import com.example.post3.security.UserDetailsImpl;
 import com.example.post3.service.PostService;
@@ -42,13 +43,15 @@ public class PostController {
 
     @PutMapping("/post/{id}")
     public PostResponseDto updatePost(@PathVariable Long id, @RequestBody PostRequestDto requestDto,
-                                      @AuthenticationPrincipal UserDetailsImpl userDetails, HttpServletResponse res) {
-        return postService.updatePost(id, requestDto, userDetails.getUser(), res);
+                                      @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        Post post = postService.findPost(id);
+        return postService.updatePost(post, requestDto, userDetails.getUser());
     }
 
     @DeleteMapping("/post/{id}")
     public StatusResponseDto deletePost(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails){
-        return postService.deletePost(id, userDetails.getUser());
+        Post post = postService.findPost(id);
+        return postService.deletePost(post, userDetails.getUser());
     }
 
 }

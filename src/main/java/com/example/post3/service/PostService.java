@@ -24,79 +24,45 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PostService {
 
-    @Autowired
     private final PostRepository postRepository;
-
-    @Autowired
-    private final CommentRepository commentRepository;
 
     private final PostLikeRepository postLikeRepository;
 
     public PostResponseDto createPost(PostRequestDto requestDto, User user) {
-        Post post = new Post();
-        post.setUser(user);
-        post.setTitle(requestDto.getTitle());
-        post.setContents(requestDto.getContents());
+        // Post 생성자로 게시글의 제목, 내용, 사용자를 설정
+        Post post = new Post(requestDto, user);
 
         // DB에 저장
         Post savePost = postRepository.save(post);
-        PostResponseDto postResponseDto = new PostResponseDto(savePost);
-        return postResponseDto;
+        return new PostResponseDto(savePost);
     }
 
     public List<PostResponseDto> getPosts() {
-        List<PostResponseDto> postResponseDtoList = new ArrayList<>();
-        List<Post> postList = postRepository.findAllByOrderByCreateTimeDesc();
-
-        for (Post post: postList) {
-            post.setCommentList(commentRepository.findAllByPostIdOrderByCreateTimeDesc(post.getId()));
-            postResponseDtoList.add(new PostResponseDto(post));
-        }
+        List<PostResponseDto> postResponseDtoList = postRepository.findAllByOrderByCreateTimeDesc().stream().map(PostResponseDto::new).toList();
         return postResponseDtoList;
     }
 
     public PostResponseDto getOnePost(Long id) {
         Post post = findPost(id);
-        post.setCommentList(commentRepository.findAllByPostIdOrderByCreateTimeDesc(post.getId()));
         return new PostResponseDto(post);
     }
 
     @Transactional
-    public PostResponseDto updatePost(Long id, PostRequestDto requestDto, User user, HttpServletResponse res){
-        Post post = findPost(id);
-        // 해당 게시글을 작성한 작성자 이거나, 권한이 ADMIN인 경우는 삭제 가능
-        if (post.getUser().getUsername().equals(user.getUsername())
-                || user.getRole().getAuthority().equals("ROLE_ADMIN")) {
-            post.update(requestDto);
-            PostResponseDto postResponseDto = new PostResponseDto(post);
-            return postResponseDto;
-        } else {
-            log.error("게시글 작성자만 수정할 수 있습니다.");
-            throw new IllegalArgumentException("작성자만 삭제/수정할 수 있습니다.");
-        }
+    public PostResponseDto updatePost(Post post, PostRequestDto requestDto, User user){
+        post.update(requestDto);
+        return new PostResponseDto(post);
     }
 
-    public StatusResponseDto deletePost(Long id, User user) {
-        Post post = findPost(id);
-        // 해당 게시글을 작성한 작성자 이거나, 권한이 ADMIN인 경우는 삭제 가능
-        if (user.getUsername().equals(post.getUser().getUsername())
-                || user.getRole().getAuthority().equals("ROLE_ADMIN")) {
-            // 게시글의 좋아요 기록 삭제
-            deletePostLike(post);
-            
-            // 게시글 삭제
-            postRepository.delete(post);
-
-            StatusResponseDto statusResponseDto = new StatusResponseDto("게시글 삭제 성공", 200);
-            return statusResponseDto;
-        } else {
-            log.error("게시글 작성자만 삭제할 수 있습니다.");
-            throw new IllegalArgumentException("작성자만 삭제/수정할 수 있습니다.");
-        }
+    public StatusResponseDto deletePost(Post post, User user) {
+        // 게시글의 좋아요 기록 삭제
+        deletePostLike(post);
+        // 게시글 삭제
+        postRepository.delete(post);
+        return new StatusResponseDto("게시글 삭제 성공", 200);
     }
 
     // 해당 포스트를 찾아서 반환
-    private Post findPost(Long id) {
+    public Post findPost(Long id) {
         return postRepository.findById(id).orElseThrow(() ->
                 new IllegalArgumentException("선택한 게시글은 존재하지 않습니다."));
     }
