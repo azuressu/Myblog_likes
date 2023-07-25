@@ -35,25 +35,8 @@ public class UserService {
 
     public StatusResponseDto signup(SignupRequestDto requestDto) {
         String username = requestDto.getUsername();
-        log.info(username);
-
         String password = passwordEncoder.encode(requestDto.getPassword());
-
-        // username 패턴 확인
-        if (Pattern.matches("^[a-z0-9]{4,10}$", username)) {
-            // 회원 중복 확인
-            Optional<User> checkUsername = userRepository.findByUsername(username);
-            if (checkUsername.isPresent()) {
-                throw new IllegalArgumentException("중복된 username 입니다.");
-            }
-        } else {
-            throw new IllegalArgumentException("username 구성에 맞지 않습니다. 영어 소문자 및 숫자를 이용해 4자에서 10자 이내로 입력하세요.");
-        }
-
-        // password 패턴 확인
-        if (!Pattern.matches("^[A-Za-z0-9@$!%*?&!~#]{8,15}$", requestDto.getPassword())){
-            throw new IllegalArgumentException("password 구성에 맞지 않습니다. 영어 대소문자 및 숫자 및 특수문자를 이용해 8자에서 15자 이내로 입력하세요.");
-        }
+        log.info(username);
 
         // 사용자 ROLE 확인
         UserRoleEnum role = UserRoleEnum.USER;
@@ -71,8 +54,7 @@ public class UserService {
         userRepository.save(user);
 
         // 성공했을 경우의 상태코드와 메시지 반환
-        StatusResponseDto statusResponseDto = new StatusResponseDto("회원가입 성공", 200);
-        return statusResponseDto;
+        return new StatusResponseDto("회원가입 성공", 200);
     }
 
 }
