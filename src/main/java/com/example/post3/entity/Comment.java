@@ -36,8 +36,10 @@ public class Comment extends Timestamped {
     @Column(name = "like_count", nullable = false)
     private Integer likeCount;
 
-    public Comment(CommentRequestDto commentRequestDto) {
+    public Comment(CommentRequestDto commentRequestDto, User user, Post post) {
         this.commentcontents = commentRequestDto.getCommentcontents();
+        this.user = user;
+        this.post = post;
     }
 
     public void update(CommentRequestDto commentRequestDto) {
