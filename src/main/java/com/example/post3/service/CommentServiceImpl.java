@@ -6,6 +6,7 @@ import com.example.post3.entity.Comment;
 import com.example.post3.entity.CommentLike;
 import com.example.post3.entity.Post;
 import com.example.post3.entity.User;
+import com.example.post3.exception.NotFoundException;
 import com.example.post3.repository.CommentLikeRepository;
 import com.example.post3.repository.CommentRepository;
 import com.example.post3.repository.PostRepository;
@@ -68,14 +69,14 @@ public class CommentServiceImpl implements CommentService{
     @Override
     public Post findPost(Long id) {
         return postRepository.findById(id).orElseThrow(() ->
-                new IllegalArgumentException("선택한 게시글은 존재하지 않습니다."));
+                new NotFoundException("선택한 게시글은 존재하지 않습니다."));
     }
 
     // 해당 댓글을 찾아서 반환
     @Override
     public Comment findComment(Long commentid) {
         return commentRepository.findById(commentid).orElseThrow(() ->
-                new IllegalArgumentException("선택한 댓글은 존재하지 않습니다"));
+                new NotFoundException("선택한 댓글은 존재하지 않습니다"));
     }
 
     // 좋아요 기록 삭제하는 메서드

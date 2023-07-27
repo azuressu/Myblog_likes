@@ -42,4 +42,14 @@ public class GlobalExceptionHandler {
         );
     }
 
+    @ExceptionHandler({NotFoundException.class})
+    public ResponseEntity<StatusResponseDto> notFoundExceptionHandler(NotFoundException e) {
+        StatusResponseDto statusResponseDto = new StatusResponseDto(e.getMessage(), HttpStatus.NOT_FOUND.value());
+
+        return new ResponseEntity<>(
+                statusResponseDto,
+                HttpStatus.NOT_FOUND
+        );
+    }
+
 }

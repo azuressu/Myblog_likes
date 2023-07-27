@@ -5,6 +5,7 @@ import com.example.post3.dto.PostResponseDto;
 import com.example.post3.entity.Post;
 import com.example.post3.entity.PostLike;
 import com.example.post3.entity.User;
+import com.example.post3.exception.NotFoundException;
 import com.example.post3.exception.StatusResponseDto;
 import com.example.post3.repository.CommentRepository;
 import com.example.post3.repository.PostLikeRepository;
@@ -64,7 +65,7 @@ public class PostServiceImpl implements PostService {
     // 해당 포스트를 찾아서 반환
     public Post findPost(Long id) {
         return postRepository.findById(id).orElseThrow(() ->
-                new IllegalArgumentException("선택한 게시글은 존재하지 않습니다."));
+                new NotFoundException("선택한 게시글은 존재하지 않습니다."));
     }
 
     // 게시글 좋아요 기록 삭제하기
