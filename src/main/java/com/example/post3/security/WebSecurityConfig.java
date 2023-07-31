@@ -64,16 +64,16 @@ public class WebSecurityConfig {
     // https://velog.io/@soyeon207/Spring-Filter-Interceptor-AOP
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{ // 프록시 레이어를 감싸고 있다 그래서 프록시 안에 세큐리티 필터들이 묶음으로 관리되고 있다
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception { // 프록시 레이어를 감싸고 있다 그래서 프록시 안에 세큐리티 필터들이 묶음으로 관리되고 있다
         // CSRF 설정 (csrf:(Cross-Site Request Forgery) 방어 기능 비활성화)
         http.csrf((csrf) -> csrf.disable());
-        http.httpBasic((basic) -> basic.disable());
+//        http.httpBasic((basic) -> basic.disable());
 
         // 기본 설정인 Session 방식은 사용하지 않고 JWT 방식을 사용하기 위한 설정
         http.sessionManagement((sessionManagement)
                 -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
-        http.authorizeHttpRequests((authorizeHttpRequests) ->
+        http.authorizeHttpRequests((authorizeHttpRequests) -> // 이 코드 자체가 인가를 처리하는 부분
                 authorizeHttpRequests
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll() // resources 접근 허용 설정
                         .requestMatchers("/").permitAll() // 메인 페이지 요청
@@ -83,15 +83,18 @@ public class WebSecurityConfig {
                         .anyRequest().authenticated() // 그 외 모든 요청 인증처리
         );
 
+        // Filter를 거쳐서 권한을 부여받고 그 권한을 Http.authorizeHttpReques 코드에서 해당 url에 따른 권한을 매칭시켜 확인
+        // permitAll(): 권한에 상관없이 접근이 가능
+
         // form 로그인 사용하지 않음
         http.formLogin((formLogin) -> formLogin.disable());
 
         // 필터 관리 - 지정된 필터 앞에 커스텀 필터를 추가
         // filterchain 자체가 filter들을 묶어서 관리한다
 //        http.addFilterBefore(jwtExceptionFilter(), JwtExceptionFilter.class);
+//        http.addFilterBefore(커스텀필터, JwtAuthorizationFilter.class);
         http.addFilterBefore(jwtAuthorizationFilter(), JwtAuthenticationFilter.class);
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
-
 
         return http.build();
     }
