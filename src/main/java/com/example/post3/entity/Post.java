@@ -2,6 +2,7 @@ package com.example.post3.entity;
 
 import com.example.post3.dto.PostRequestDto;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -40,6 +41,7 @@ public class Post extends Timestamped{
     @OneToMany(mappedBy = "post", cascade = {CascadeType.PERSIST,CascadeType.REMOVE})
     private List<Comment> commentList = new ArrayList<>();
 
+    @Builder
     public Post(PostRequestDto requestDto, User user) {
         this.title = requestDto.getTitle();
         this.contents = requestDto.getContents();

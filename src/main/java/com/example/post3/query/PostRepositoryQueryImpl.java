@@ -6,6 +6,8 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Wildcard;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
@@ -15,7 +17,8 @@ import java.util.List;
 import static com.example.post3.entity.QPost.post;
 
 @RequiredArgsConstructor
-public class PostRepositoryQueryImpl implements PostRepositoryQuery{
+@Configuration
+public class PostRepositoryQueryImpl implements PostRepositoryQuery {
 
     // QueryDSL 라이브러리를 사용해 JPA 쿼리를 생성하고 실행하기 위한 클래스
     private final JPAQueryFactory jpaQueryFactory;
@@ -33,7 +36,7 @@ public class PostRepositoryQueryImpl implements PostRepositoryQuery{
     }
 
     @Override
-    public Page<Post> search(PostSearchCond cond, Pageable pageable) {
+    public Page<Post> searching(PostSearchCond cond, Pageable pageable) {
         var query = jpaQueryFactory.select(post)
                 .from(post)
                 .where(

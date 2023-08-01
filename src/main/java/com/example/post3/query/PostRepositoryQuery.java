@@ -6,6 +6,6 @@ import org.springframework.data.domain.Pageable;
 
 public interface PostRepositoryQuery {
 
-    Page<Post> search(PostSearchCond cond, Pageable pageable);
+    Page<Post> searching(PostSearchCond cond, Pageable pageable);
 
 }

@@ -1,10 +1,7 @@
 package com.example.post3.entity;
 
 import jakarta.persistence.*;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +26,7 @@ public class User {
     @Enumerated(value = EnumType.STRING)
     private UserRoleEnum role;
 
+    @Builder
     public User(String username, String password , UserRoleEnum role) {
         this.username = username;
         this.password = password;
