@@ -6,7 +6,6 @@ import com.example.post3.entity.Post;
 import com.example.post3.exception.StatusResponseDto;
 import com.example.post3.security.UserDetailsImpl;
 import com.example.post3.service.PostServiceImpl;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;

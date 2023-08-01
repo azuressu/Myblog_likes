@@ -39,6 +39,7 @@ public class PostServiceImpl implements PostService {
         return new PostResponseDto(savePost);
     }
 
+    @Override
     public List<PostResponseDto> getPosts() {
         List<PostResponseDto> postResponseDtoList = postRepository.findAllByOrderByCreateTimeDesc().stream().map(PostResponseDto::new).toList();
         return postResponseDtoList;

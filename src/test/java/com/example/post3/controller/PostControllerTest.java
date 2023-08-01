@@ -17,6 +17,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.util.Date;
+
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -45,18 +47,19 @@ class PostControllerTest {
     @BeforeEach
     @DisplayName("user 로그인해서 UserDetails로")
     public void setUp() throws Exception{
+        /* MockMvcBuilders: MockMvc를 생성하는 빌더 클래스 - MockMvc 객체를 설정하고 빌드할 수 있음
+        *  webAppContextSetup(context): MockMvc를 설정하기 위해서 사용할 웹 어플리케이션 컨텍스트(애플리케이션에 대한 구성 정보를 제공하는 스프링의 핵심 컨테이너)를 지정
+        *  apply(springSecurity()): Spring Security를 적용해 MockMvc를 설정(테스트 중에도 Security 인증 및 권한 검사가 가능)
+        *  build(): 모든 옵션을 기반으로 MockMvc 객체를 빌드해 반환. 이렇게 생성된 MockMvc 객체를 통해 컨트롤러 테스트 및 Http 요청 및 응답 검증 가능*/
+
         mockMvc = MockMvcBuilders
                 .webAppContextSetup(context)
                 .apply(springSecurity())
                 .build();
 
-        // 이미 있는 회원정보로 UserDetailsImpl을 생성함
-        UserDetailsImpl userDetails = (UserDetailsImpl) userDetailsService.loadUserByUsername("username");
-        // 해당 UserDetailsImpl에서 username과 role을 가져옴
-        String username = userDetails.getUsername();
-        UserRoleEnum role = userDetails.getUser().getRole();
-        // username과 role로 token을 생성함
-        token = jwtUtil.createToken(username, role);
+        // 이미 존재하는 회원으로 token 생성
+        // username: username, role:UserRoleEnum.USER
+        token = jwtUtil.createToken("username", UserRoleEnum.USER);
     }
 
     @Test
@@ -64,8 +67,8 @@ class PostControllerTest {
     @DisplayName("PostController: 게시글 작성 확인 (POST)")
     void createPost() throws Exception{
         // given
-        String title = "Testing";
-        String contents = "Testing ~";
+        String title = "테스트 입니닷";
+        String contents = "Testing 중이에요";
 
         String postRequestDto = objectMapper.writeValueAsString(new PostRequestDto(title, contents));
 
@@ -110,7 +113,7 @@ class PostControllerTest {
     @Test
     @DisplayName("PostController: 게시글 삭제 확인 (DELETE)")
     void deletePost() throws Exception {
-        mockMvc.perform(delete("/api/post/13")
+        mockMvc.perform(delete("/api/post/18")
                 .header("Authorization", token))
                 .andExpect(status().isOk());
     }
