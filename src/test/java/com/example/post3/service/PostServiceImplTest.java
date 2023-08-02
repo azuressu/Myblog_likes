@@ -41,7 +41,7 @@ class PostServiceImplTest {
 
     @BeforeEach
     void init() {
-        MockitoAnnotations.openMocks(this);
+        MockitoAnnotations.initMocks(this);
     }
 
     @Test
