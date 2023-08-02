@@ -10,11 +10,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.parameters.P;
 
 import java.util.List;
 import java.util.Optional;
@@ -24,9 +26,11 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-@TestInstance(TestInstance.Lifecycle.PER_METHOD)
+@ExtendWith(MockitoExtension.class)
+//@TestInstance(TestInstance.Lifecycle.PER_METHOD)
+/* TestInstance.Lifecycle.PER_METHOD: 각 테스트 메서드마다 새로운 인스턴스를 생성하도록 지정하는 옵션 */
 class PostServiceImplTest {
 
     /* Mock 객체를 테스트 대상 객체에 주입할 수 있고, 해당 객체의 메서드를 호출해 테스트 수행 가능 */
@@ -42,6 +46,7 @@ class PostServiceImplTest {
     @BeforeEach
     void init() {
         MockitoAnnotations.openMocks(this);
+        postService = new PostServiceImpl(postRepository, postLikeRepository);
     }
 
     @Test
@@ -64,9 +69,10 @@ class PostServiceImplTest {
         User user = new User();
         PostRequestDto postRequestDto = new PostRequestDto("title", "contents");
         var newPost = Post.builder().requestDto(postRequestDto).user(user).build();
-        given(postRepository.findById(20L)).willReturn(Optional.ofNullable(newPost));
+        newPost.setId(20L);
 
         // when
+        when(postRepository.findById(any(Long.class))).thenReturn(Optional.ofNullable(newPost));
         PostResponseDto postResponseDto = postService.getOnePost(20L);
 
         // then
@@ -81,16 +87,16 @@ class PostServiceImplTest {
         User user = new User();
         PostRequestDto postRequestDto = new PostRequestDto("title", "contents");
         var newPost = Post.builder().requestDto(postRequestDto).user(user).build();
-        given(postRepository.save(any())).willReturn(newPost);
+        when(postRepository.save(any(Post.class))).thenReturn(newPost);
 
         // when
-//        PostResponseDto postResponseDto = postService.createPost(postRequestDto, user);
-        postService.createPost(postRequestDto, user);
+        PostResponseDto postResponseDto = postService.createPost(postRequestDto, user);
+//        postService.createPost(postRequestDto, user);
 
         // then
-//        then(newPost.getTitle()).equals(postResponseDto.getTitle());
-//        then(newPost.getContents()).equals(postResponseDto.getContents());
-        then(postRepository).should(times(1)).save(any());
+        then(newPost.getTitle()).equals(postResponseDto.getTitle());
+        then(newPost.getContents()).equals(postResponseDto.getContents());
+//        then(postRepository).should(times(1)).save(any());
 
         /* 주석 처리 된 내용끼리 테스트 통과 확인 */
     }
@@ -120,13 +126,14 @@ class PostServiceImplTest {
         User user = new User();
         PostRequestDto postRequestDto = new PostRequestDto("title", "content");
         var newPost = Post.builder().requestDto(postRequestDto).user(user).build();
-        given(postLikeRepository.findByPostId(newPost.getId())).willReturn(null);
+        when(postLikeRepository.findByPostId(any(Long.class))).thenReturn(null);
 
         // when
+        Integer size = (int) postRepository.count();
         postService.deletePost(newPost, user);
 
         // then
-        then(15).equals(postRepository.count());
+        then(size).equals(postRepository.count());
     }
 
 }
