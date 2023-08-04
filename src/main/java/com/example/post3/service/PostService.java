@@ -5,7 +5,9 @@ import com.example.post3.dto.PostResponseDto;
 import com.example.post3.entity.Post;
 import com.example.post3.entity.User;
 import com.example.post3.exception.StatusResponseDto;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 public interface PostService {
@@ -16,7 +18,7 @@ public interface PostService {
      * @param user: 게시글 작성 요청자
      * @return: 게시글 작성 결과
      */
-    PostResponseDto createPost(PostRequestDto requestDto, User user);
+    PostResponseDto createPost(String requestDto, User user, MultipartFile multipartFile) throws IOException;
 
     /**
      * 게시글 전체 목록 조회

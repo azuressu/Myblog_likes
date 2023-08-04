@@ -30,6 +30,8 @@ public class Post extends Timestamped{
     @Column(name = "contents", nullable = false)
     private String contents;
 
+    private String imageUrl;
+
     @ManyToOne
     @JoinColumn(name = "username")
     private User user;

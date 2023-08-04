@@ -34,13 +34,13 @@ class PostControllerTest {
     private ObjectMapper objectMapper;
 
     @Autowired
-    UserDetailsServiceImpl userDetailsService;
+    private UserDetailsServiceImpl userDetailsService;
 
     @Autowired
-    JwtUtil jwtUtil;
+    private JwtUtil jwtUtil;
 
     @Autowired
-    WebApplicationContext context;
+    private WebApplicationContext context;
 
     String token;
 

@@ -1,6 +1,9 @@
-package com.example.post3.security;
+package com.example.post3.config;
 
 import com.example.post3.jwt.JwtUtil;
+import com.example.post3.security.JwtAuthenticationFilter;
+import com.example.post3.security.JwtAuthorizationFilter;
+import com.example.post3.security.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;

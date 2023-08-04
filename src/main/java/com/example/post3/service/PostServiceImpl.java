@@ -10,13 +10,18 @@ import com.example.post3.exception.StatusResponseDto;
 import com.example.post3.repository.CommentRepository;
 import com.example.post3.repository.PostLikeRepository;
 import com.example.post3.repository.PostRepository;
+import com.example.post3.s3.S3Uploader;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,10 +34,21 @@ public class PostServiceImpl implements PostService {
 
     private final PostLikeRepository postLikeRepository;
 
+    @Autowired
+    private final S3Uploader s3Uploader;
+
     @Override
-    public PostResponseDto createPost(PostRequestDto requestDto, User user) {
+    public PostResponseDto createPost(String requestDto, User user, MultipartFile multipartFile) throws IOException, JsonProcessingException {
+        PostRequestDto postRequestDto = conversionDto(requestDto);
+
         // Post 생성자로 게시글의 제목, 내용, 사용자를 설정
-        Post post = new Post(requestDto, user);
+        Post post = new Post(postRequestDto, user);
+
+        // 이미지가 비어있지 않다면
+        if (!multipartFile.isEmpty()) {
+            String storedFileName = s3Uploader.upload(multipartFile);
+            post.setImageUrl(storedFileName);
+        }
 
         // DB에 저장
         Post savePost = postRepository.save(post);
@@ -75,6 +91,12 @@ public class PostServiceImpl implements PostService {
         List<PostLike> postLikeList = postLikeRepository.findByPostId(post.getId());
         // 게시글 좋아요 기록 삭제하기
         postLikeRepository.deleteAll(postLikeList);
+    }
+
+    // String 타입의 형태를 다시 PostRequestDto 형태로 바꿈
+    public PostRequestDto conversionDto(String requestDto) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        return objectMapper.readValue(requestDto, PostRequestDto.class);
     }
 
 }
